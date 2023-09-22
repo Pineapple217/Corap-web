@@ -18,7 +18,6 @@ var (
 	// mu sync.Mutex
 )
 
-// Connect with database
 func Connect() {
 	err := godotenv.Load()
 	if err != nil {
@@ -35,15 +34,14 @@ func Connect() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	db.Ping()
+	err = db.Ping()
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("Connected with Database")
 }
 
-func GetDivices() []models.Device {
-	// rows, err := db.Query("SELECT deveui, name, hashedname FROM device")
+func GetDevices() []models.Device {
 	rows, err := db.Query(`SELECT deveui, name, hashedname, is_defect FROM device d
 							join analyse_device a on a.device_id = d.deveui
 							order by name`)
@@ -67,6 +65,46 @@ func GetDivices() []models.Device {
 		log.Fatal(err)
 	}
 	return devices
+}
+
+func GetDevice(deveui string) (models.Device, error) {
+	row := db.QueryRow(`SELECT deveui, name, hashedname, is_defect FROM device d
+							join analyse_device a on a.device_id = d.deveui
+							WHERE deveui = $1`, deveui)
+	var device models.Device
+	err := row.Scan(&device.Deveui, &device.Name, &device.Hashedname, &device.IsDefect)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return device, err
+		}
+		log.Fatal(err)
+	}
+
+	return device, nil
+}
+
+func GetDeviceScrapes(deveui string, plotType models.PlotType) ([]float32, []time.Time) {
+	rows, err := db.Query(fmt.Sprintf(`SELECT %s, time_scraped FROM scrape
+							WHERE deveui = $1
+							AND time_scraped >= NOW() - '1 day'::INTERVAL
+							ORDER BY time_scraped`, plotType), deveui)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var data float32
+	var timestamp time.Time
+	var datas []float32
+	var timestamps []time.Time
+	for rows.Next() {
+		err := rows.Scan(&data, &timestamp)
+		if err != nil {
+			log.Fatal(err)
+		}
+		datas = append(datas, data)
+		timestamps = append(timestamps, timestamp)
+
+	}
+	return datas, timestamps
 }
 
 func GetSchedulerJobs() []models.Job {

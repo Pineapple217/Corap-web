@@ -1,0 +1,11 @@
+<h1>{{ .PlotType }}</h1>
+<div id="plot-{{ .PlotType }}">
+  <script>
+    var trace1 = {
+      x: {{ .PlotTime}},
+      y: {{ .PlotData }},
+      type: "scatter",
+    };
+    Plotly.newPlot("plot-{{ .PlotType }}", [trace1]);
+  </script>
+</div>

@@ -1,0 +1,46 @@
+<header>
+  <h1>{{ .Device.Name }}</h1>
+  <h2>{{ .Device.Deveui }}</h2>
+  <h2>{{ .Device.Hashedname }}</h2>
+</header>
+<br />
+
+<button class="tab-button" onclick="openTab('temp')">Temperature</button>
+<button class="tab-button" onclick="openTab('co2')">Co2</button>
+<button class="tab-button" onclick="openTab('humidity')">Humidity</button>
+<hr />
+
+<div
+  id="temp"
+  class="tab-content"
+  hx-get="/devices/{{ .Device.Deveui }}/plots/temp"
+  hx-trigger="intersect once"
+  style="width: 800px; height: 600px; display: none"></div>
+<div
+  id="co2"
+  class="tab-content"
+  hx-get="/devices/{{ .Device.Deveui }}/plots/co2"
+  hx-trigger="intersect once"
+  style="width: 800px; height: 600px; display: none"></div>
+<div
+  id="humidity"
+  class="tab-content"
+  hx-get="/devices/{{ .Device.Deveui }}/plots/humidity"
+  hx-trigger="intersect once"
+  style="width: 800px; height: 600px; display: none"></div>
+
+<script>
+  function openTab(tabName) {
+    let i;
+    let tabContent;
+
+    tabContent = document.getElementsByClassName("tab-content");
+
+    for (i = 0; i < tabContent.length; i++) {
+      tabContent[i].style.display = "none";
+    }
+
+    document.getElementById(tabName).style.display = "block";
+  }
+  openTab("temp");
+</script>
