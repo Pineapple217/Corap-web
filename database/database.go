@@ -8,13 +8,15 @@ import (
 	"time"
 
 	"database/sql"
+	"strconv"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
 var (
-	db *sql.DB
+	db     *sql.DB
+	dbName string
 	// mu sync.Mutex
 )
 
@@ -25,7 +27,7 @@ func Connect() {
 	}
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
+	dbName = os.Getenv("DB_NAME")
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
 	connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable",
@@ -39,6 +41,44 @@ func Connect() {
 		log.Fatal(err)
 	}
 	fmt.Println("Connected with Database")
+}
+
+func GetDatabaseSize() string {
+	row := db.QueryRow(fmt.Sprintf("SELECT pg_size_pretty(pg_database_size('%s'));", dbName))
+	var size string
+	err := row.Scan(&size)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return size
+}
+
+func GetScrapeCount() int {
+	row := db.QueryRow("SELECT COUNT(id) FROM scrape")
+	var countStr string
+	err := row.Scan(&countStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	count, err := strconv.ParseInt(countStr, 10, 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return int(count)
+}
+
+func GetBatchCount() int {
+	row := db.QueryRow("SELECT MAX(batch_id) from scrape;")
+	var batchCountStr string
+	err := row.Scan(&batchCountStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	count, err := strconv.ParseInt(batchCountStr, 10, 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return int(count)
 }
 
 func GetDevices() []models.Device {
@@ -68,6 +108,7 @@ func GetDevices() []models.Device {
 }
 
 func GetDevice(deveui string) (models.Device, error) {
+	// TODO: temp co2 humid toevoegen aan dev
 	row := db.QueryRow(`SELECT deveui, name, hashedname, is_defect FROM device d
 							join analyse_device a on a.device_id = d.deveui
 							WHERE deveui = $1`, deveui)
@@ -83,11 +124,11 @@ func GetDevice(deveui string) (models.Device, error) {
 	return device, nil
 }
 
-func GetDeviceScrapes(deveui string, plotType models.PlotType) ([]float32, []time.Time) {
+func GetDeviceScrapes(deveui string, plotType models.PlotType, dateRange int) ([]float32, []time.Time) {
 	rows, err := db.Query(fmt.Sprintf(`SELECT %s, time_scraped FROM scrape
 							WHERE deveui = $1
-							AND time_scraped >= NOW() - '1 day'::INTERVAL
-							ORDER BY time_scraped`, plotType), deveui)
+							AND time_scraped >= NOW() - '%d day'::INTERVAL
+							ORDER BY time_scraped`, plotType, dateRange), deveui)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -130,9 +171,6 @@ func GetSchedulerJobs() []models.Job {
 		log.Fatal(err)
 	}
 	return jobs
-}
-
-func Insert(user *models.User) {
 }
 
 func Get() *sql.DB {

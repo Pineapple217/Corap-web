@@ -43,6 +43,8 @@ func main() {
 
 	app.Get("/jobs", handlers.Jobs)
 
+	app.Get("/scrape", handlers.Scrape)
+
 	app.Get("/devices/:deveui/plots/:plot_type", handlers.DevicePlots)
 
 	// Setup static files

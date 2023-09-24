@@ -4,7 +4,15 @@
   <h2>{{ .Device.Hashedname }}</h2>
 </header>
 <br />
+<label for="time-range">Select a Time Range:</label>
+<select name="range" id="time-range">
+  <option value="1">24 hours</option>
+  <option value="7">1 week</option>
+  <option value="30">30 days</option>
+  <option value="90">90 days</option>
+</select>
 
+<br />
 <button class="tab-button" onclick="openTab('temp')">Temperature</button>
 <button class="tab-button" onclick="openTab('co2')">Co2</button>
 <button class="tab-button" onclick="openTab('humidity')">Humidity</button>
@@ -14,19 +22,22 @@
   id="temp"
   class="tab-content"
   hx-get="/devices/{{ .Device.Deveui }}/plots/temp"
-  hx-trigger="intersect once"
+  hx-include="[name='range']"
+  hx-trigger="load, change from:#time-range"
   style="width: 800px; height: 600px; display: none"></div>
 <div
   id="co2"
   class="tab-content"
   hx-get="/devices/{{ .Device.Deveui }}/plots/co2"
-  hx-trigger="intersect once"
+  hx-include="[name='range']"
+  hx-trigger="load, change from:#time-range"
   style="width: 800px; height: 600px; display: none"></div>
 <div
   id="humidity"
   class="tab-content"
   hx-get="/devices/{{ .Device.Deveui }}/plots/humidity"
-  hx-trigger="intersect once"
+  hx-include="[name='range']"
+  hx-trigger="load, change from:#time-range"
   style="width: 800px; height: 600px; display: none"></div>
 
 <script>

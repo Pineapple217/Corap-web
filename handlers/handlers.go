@@ -4,6 +4,8 @@ import (
 	"Corap-web/database"
 	"Corap-web/models"
 
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -49,7 +51,13 @@ func DevicePlots(c *fiber.Ctx) error {
 	default:
 		return c.Status(404).SendFile("./static/private/404.html")
 	}
-	datas, timestamps := database.GetDeviceScrapes(c.Params("deveui"), plotType)
+
+	dateRange, err := strconv.ParseInt(c.Query("range"), 10, 0)
+	if err != nil {
+		dateRange = 1
+	}
+
+	datas, timestamps := database.GetDeviceScrapes(c.Params("deveui"), plotType, int(dateRange))
 	return c.Render("partials/device_plot", fiber.Map{
 		"PlotType": plotTypeStr,
 		"PlotData": datas,
@@ -60,5 +68,13 @@ func DevicePlots(c *fiber.Ctx) error {
 func Jobs(c *fiber.Ctx) error {
 	return c.Render("jobs", fiber.Map{
 		"Jobs": database.GetSchedulerJobs(),
+	}, "layouts/main")
+}
+
+func Scrape(c *fiber.Ctx) error {
+	return c.Render("scrape", fiber.Map{
+		"ScrapeCount":  database.GetScrapeCount(),
+		"DatabaseSize": database.GetDatabaseSize(),
+		"BatchCount":   database.GetBatchCount(),
 	}, "layouts/main")
 }
