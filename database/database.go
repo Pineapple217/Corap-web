@@ -15,8 +15,9 @@ import (
 )
 
 var (
-	db     *sql.DB
-	dbName string
+	db         *sql.DB
+	dbName     string
+	timeLayout = "2006-01-02T15:04:05.999999Z"
 	// mu sync.Mutex
 )
 
@@ -79,6 +80,20 @@ func GetBatchCount() int {
 		log.Fatal(err)
 	}
 	return int(count)
+}
+
+func GetTimeLastScrape() time.Time {
+	row := db.QueryRow("SELECT MAX(time_scraped) from scrape;")
+	var timeStr string
+	err := row.Scan(&timeStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	t, err := time.Parse(timeLayout, timeStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return t
 }
 
 func GetDevices() []models.Device {

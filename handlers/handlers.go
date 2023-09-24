@@ -76,5 +76,6 @@ func Scrape(c *fiber.Ctx) error {
 		"ScrapeCount":  database.GetScrapeCount(),
 		"DatabaseSize": database.GetDatabaseSize(),
 		"BatchCount":   database.GetBatchCount(),
+		"LastScraped":  database.GetTimeLastScrape().Format("2006-01-02 15:04:05"),
 	}, "layouts/main")
 }
