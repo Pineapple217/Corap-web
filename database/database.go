@@ -97,9 +97,16 @@ func GetTimeLastScrape() time.Time {
 }
 
 func GetDevices() []models.Device {
-	rows, err := db.Query(`SELECT deveui, name, hashedname, is_defect FROM device d
-							join analyse_device a on a.device_id = d.deveui
-							order by name`)
+	rows, err := db.Query(`WITH RankedScrapeData AS (
+							SELECT d.deveui, d.name, d.hashedname, a.is_defect, s.temp, s.co2, s.humidity, s.time_scraped,
+								ROW_NUMBER() OVER (PARTITION BY d.deveui ORDER BY s.time_scraped DESC) AS rn
+							FROM device d
+							JOIN scrape s ON d.deveui = s.deveui
+							JOIN analyse_device a ON a.device_id = d.deveui
+							)
+							SELECT deveui, name, hashedname, is_defect, temp, co2, humidity
+							FROM RankedScrapeData
+							WHERE rn = 1;`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -109,7 +116,7 @@ func GetDevices() []models.Device {
 
 	for rows.Next() {
 		var device models.Device
-		err := rows.Scan(&device.Deveui, &device.Name, &device.Hashedname, &device.IsDefect)
+		err := rows.Scan(&device.Deveui, &device.Name, &device.Hashedname, &device.IsDefect, &device.Temp, &device.Co2, &device.Humidity)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -123,12 +130,15 @@ func GetDevices() []models.Device {
 }
 
 func GetDevice(deveui string) (models.Device, error) {
-	// TODO: temp co2 humid toevoegen aan dev
-	row := db.QueryRow(`SELECT deveui, name, hashedname, is_defect FROM device d
-							join analyse_device a on a.device_id = d.deveui
-							WHERE deveui = $1`, deveui)
+	row := db.QueryRow(`SELECT d.deveui, name, hashedname, is_defect, temp, co2, humidity FROM device d
+						join analyse_device a on a.device_id = d.deveui
+						join scrape s on d.deveui = s.deveui
+						WHERE d.deveui = $1
+						ORDER BY time_scraped DESC
+						LIMIT 1;`, deveui)
 	var device models.Device
-	err := row.Scan(&device.Deveui, &device.Name, &device.Hashedname, &device.IsDefect)
+	err := row.Scan(&device.Deveui, &device.Name, &device.Hashedname, &device.IsDefect,
+		&device.Temp, &device.Co2, &device.Humidity)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return device, err
