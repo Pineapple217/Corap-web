@@ -8,8 +8,10 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cache"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/utils"
 	"github.com/gofiber/template/html/v2"
 )
 
@@ -35,6 +37,11 @@ func main() {
 	// Middleware
 	app.Use(recover.New())
 	app.Use(logger.New())
+	app.Use(cache.New(cache.Config{
+		KeyGenerator: func(c *fiber.Ctx) string {
+			return utils.CopyString(c.OriginalURL())
+		},
+	}))
 
 	app.Get("/", handlers.Home)
 

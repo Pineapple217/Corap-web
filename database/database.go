@@ -2,22 +2,24 @@ package database
 
 import (
 	"Corap-web/models"
+	"context"
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 	"time"
 
-	"database/sql"
 	"strconv"
 
+	"github.com/gofiber/fiber/v2"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 )
 
 var (
-	db         *sql.DB
-	dbName     string
-	timeLayout = "2006-01-02T15:04:05.999999Z"
+	db     *pgxpool.Pool
+	dbName string
 	// mu sync.Mutex
 )
 
@@ -26,18 +28,22 @@ func Connect() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	maxConn := runtime.NumCPU() * 4
+	if fiber.IsChild() {
+		maxConn = 5
+	}
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName = os.Getenv("DB_NAME")
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
-	connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable",
-		dbUser, dbPassword, dbName, dbHost, dbPort)
-	db, err = sql.Open("postgres", connStr)
+	connStr := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%s sslmode=disable pool_max_conns=%d",
+		dbUser, dbPassword, dbName, dbHost, dbPort, maxConn)
+	db, err = pgxpool.New(context.Background(), connStr)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = db.Ping()
+	err = db.Ping(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,7 +51,7 @@ func Connect() {
 }
 
 func GetDatabaseSize() string {
-	row := db.QueryRow(fmt.Sprintf("SELECT pg_size_pretty(pg_database_size('%s'));", dbName))
+	row := db.QueryRow(context.Background(), fmt.Sprintf("SELECT pg_size_pretty(pg_database_size('%s'));", dbName))
 	var size string
 	err := row.Scan(&size)
 	if err != nil {
@@ -55,7 +61,7 @@ func GetDatabaseSize() string {
 }
 
 func GetScrapeCount() int {
-	row := db.QueryRow("SELECT COUNT(id) FROM scrape")
+	row := db.QueryRow(context.Background(), "SELECT COUNT(id) FROM scrape")
 	var countStr string
 	err := row.Scan(&countStr)
 	if err != nil {
@@ -69,7 +75,7 @@ func GetScrapeCount() int {
 }
 
 func GetBatchCount() int {
-	row := db.QueryRow("SELECT MAX(batch_id) from scrape;")
+	row := db.QueryRow(context.Background(), "SELECT MAX(batch_id) from scrape;")
 	var batchCountStr string
 	err := row.Scan(&batchCountStr)
 	if err != nil {
@@ -83,21 +89,17 @@ func GetBatchCount() int {
 }
 
 func GetTimeLastScrape() time.Time {
-	row := db.QueryRow("SELECT MAX(time_scraped) from scrape;")
-	var timeStr string
-	err := row.Scan(&timeStr)
+	row := db.QueryRow(context.Background(), "SELECT MAX(time_scraped) from scrape;")
+	var scrapeTime time.Time
+	err := row.Scan(&scrapeTime)
 	if err != nil {
 		log.Fatal(err)
 	}
-	t, err := time.Parse(timeLayout, timeStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return t
+	return scrapeTime
 }
 
 func GetDevices() []models.Device {
-	rows, err := db.Query(`WITH RankedScrapeData AS (
+	rows, err := db.Query(context.Background(), `WITH RankedScrapeData AS (
 							SELECT d.deveui, d.name, d.hashedname, a.is_defect, s.temp, s.co2, s.humidity, s.time_scraped,
 								ROW_NUMBER() OVER (PARTITION BY d.deveui ORDER BY s.time_scraped DESC) AS rn
 							FROM device d
@@ -126,11 +128,14 @@ func GetDevices() []models.Device {
 	if err := rows.Err(); err != nil {
 		log.Fatal(err)
 	}
+	if err != nil {
+		log.Fatal(err)
+	}
 	return devices
 }
 
 func GetDevice(deveui string) (models.Device, error) {
-	row := db.QueryRow(`SELECT d.deveui, name, hashedname, is_defect, temp, co2, humidity FROM device d
+	row := db.QueryRow(context.Background(), `SELECT d.deveui, name, hashedname, is_defect, temp, co2, humidity FROM device d
 						join analyse_device a on a.device_id = d.deveui
 						join scrape s on d.deveui = s.deveui
 						WHERE d.deveui = $1
@@ -140,7 +145,7 @@ func GetDevice(deveui string) (models.Device, error) {
 	err := row.Scan(&device.Deveui, &device.Name, &device.Hashedname, &device.IsDefect,
 		&device.Temp, &device.Co2, &device.Humidity)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == pgx.ErrNoRows {
 			return device, err
 		}
 		log.Fatal(err)
@@ -150,13 +155,14 @@ func GetDevice(deveui string) (models.Device, error) {
 }
 
 func GetDeviceScrapes(deveui string, plotType models.PlotType, dateRange int) ([]float32, []time.Time) {
-	rows, err := db.Query(fmt.Sprintf(`SELECT %s, time_scraped FROM scrape
+	rows, err := db.Query(context.Background(), fmt.Sprintf(`SELECT %s, time_scraped FROM scrape
 							WHERE deveui = $1
 							AND time_scraped >= NOW() - '%d day'::INTERVAL
 							ORDER BY time_scraped`, plotType, dateRange), deveui)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer rows.Close()
 	var data float32
 	var timestamp time.Time
 	var datas []float32
@@ -174,7 +180,7 @@ func GetDeviceScrapes(deveui string, plotType models.PlotType, dateRange int) ([
 }
 
 func GetSchedulerJobs() []models.Job {
-	rows, err := db.Query("SELECT id, next_run_time, job_state FROM apscheduler_jobs")
+	rows, err := db.Query(context.Background(), "SELECT id, next_run_time FROM apscheduler_jobs")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -184,7 +190,7 @@ func GetSchedulerJobs() []models.Job {
 	var float_time float64
 	for rows.Next() {
 		var job models.Job
-		err := rows.Scan(&job.Id, &float_time, &job.JobState)
+		err := rows.Scan(&job.Id, &float_time)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -198,6 +204,6 @@ func GetSchedulerJobs() []models.Job {
 	return jobs
 }
 
-func Get() *sql.DB {
+func Get() *pgxpool.Pool {
 	return db
 }
