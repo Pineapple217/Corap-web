@@ -21,7 +21,6 @@ table[data-sortable] th {
 /* line 10, ../sass/_sortable.sass */
 table[data-sortable] th, table[data-sortable] td {
     text-align: left;
-    padding: 10px;
 }
 
 /* line 14, ../sass/_sortable.sass */
