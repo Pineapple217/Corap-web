@@ -18,30 +18,35 @@
               <th
                 scope="col"
                 class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                Temperature
+                Temperature (°C)
               </th>
               <th
                 scope="col"
                 class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                Co2
+                Co2 (PPM)
               </th>
               <th
                 scope="col"
                 class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                Humidity
+                Humidity (%)
               </th>
               <th
                 scope="col"
+                data-sortable="false"
                 class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
                 Source
+              </th>
+              <th
+                scope="col"
+                class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
+                Status
               </th>
             </tr>
           </thead>
           <tbody class="mono">
             {{ range .Devices }} {{ if .IsDefect }}
-            <tr class="bg-gray-100 border-b text-gray-500 shadow-inner">
-              {{ else }}
-            </tr>
+            <tr class="bg-gray-100 border-b text-gray-500 shadow-inner" />
+            {{ else }}
             <tr class="bg-white border-b text-gray-900">
               {{ end }}
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -76,6 +81,26 @@
                       d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                   </svg>
                 </a>
+              </td>
+              <td
+                class="text-sm font-light px-6 py-4 whitespace-nowrap"
+                data-value="{{ .IsDefect }}">
+                {{ if .IsDefect }}
+                <span title="Offline" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+
+                {{ end }}
               </td>
             </tr>
             {{ end }}
