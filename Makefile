@@ -25,14 +25,15 @@ build-no-cache: ## Generate docker image with no cache
 
 up-silent: ## Run local container in background
 	make delete-container-if-exist
-	docker run -d -p 3000:3000 --name $(project_name) $(image_name) ./app
+	docker run -d --env-file ./docker.env -p 3000:3000 --name $(project_name) $(image_name) ./app -listen "0.0.0.0"
 
 up-silent-prefork: ## Run local container in background with prefork
 	make delete-container-if-exist
-	docker run -d -p 3000:3000 --name $(project_name) $(image_name) ./app -prod
+	docker run -d -p 3000:3000 --name $(project_name) $(image_name) ./app -prod -listen "0.0.0.0"
 
 delete-container-if-exist: ## Delete container if it exists
-	docker stop $(project_name) || true && docker rm $(project_name) || true
+	docker stop $(project_name) || VER>NUL
+	docker rm $(project_name) || VER>NUL
 
 shell: ## Run interactive shell in the container
 	docker exec -it $(project_name) /bin/sh

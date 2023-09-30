@@ -16,8 +16,9 @@ import (
 )
 
 var (
-	port = flag.String("port", ":3000", "Port to listen on")
-	prod = flag.Bool("prod", false, "Enable prefork in Production")
+	port   = flag.String("port", ":3000", "Port to listen on")
+	listen = flag.String("listen", "127.0.0.1", "Where to listen, 0.0.0.0 is needed for docker")
+	prod   = flag.Bool("prod", false, "Enable prefork in Production")
 )
 
 func main() {
@@ -61,5 +62,5 @@ func main() {
 	app.Use(handlers.NotFound)
 
 	// Listen on port 3000
-	log.Fatal(app.Listen("127.0.0.1" + *port)) // go run app.go -port=:3000
+	log.Fatal(app.Listen(*listen + *port)) // go run app.go -port=:3000
 }
