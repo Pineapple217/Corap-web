@@ -26,7 +26,7 @@ var (
 func Connect() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Println("Error loading .env file")
 	}
 	maxConn := runtime.NumCPU() * 4
 	if fiber.IsChild() {
@@ -155,7 +155,7 @@ func GetDevice(deveui string) (models.Device, error) {
 }
 
 func GetDeviceScrapes(deveui string, plotType models.PlotType, dateRange int) ([]float32, []time.Time) {
-	rows, err := db.Query(context.Background(), fmt.Sprintf(`SELECT %s, time_scraped FROM scrape
+	rows, err := db.Query(context.Background(), fmt.Sprintf(`SELECT %s, time_updated FROM scrape
 							WHERE deveui = $1
 							AND time_scraped >= NOW() - '%d day'::INTERVAL
 							ORDER BY time_scraped`, plotType, dateRange), deveui)
