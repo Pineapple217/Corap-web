@@ -1,28 +1,6 @@
-# GoFiber Docker Boilerplate
+# Corap-web
 
-![Release](https://img.shields.io/github/release/gofiber/boilerplate.svg)
-[![Discord](https://img.shields.io/badge/discord-join%20channel-7289DA)](https://gofiber.io/discord)
-![Test](https://github.com/gofiber/boilerplate/workflows/Test/badge.svg)
-![Security](https://github.com/gofiber/boilerplate/workflows/Security/badge.svg)
-![Linter](https://github.com/gofiber/boilerplate/workflows/Linter/badge.svg)
-
-
-## IDE Development
-
-### Visual Studio Code
-
-Use the following plugins, in this boilerplate project:
-- Name: Go
-  - ID: golang.go
-  - Description: Rich Go language support for Visual Studio Code
-  - Version: 0.29.0
-  - Editor: Go Team at Google
-  - Link to Marketplace to VS: https://marketplace.visualstudio.com/items?itemName=golang.Go
-
-## Development
-
-### Start the application 
-
+### Start the application
 
 ```bash
 go run app.go
@@ -70,6 +48,3 @@ docker run -d -p 3000:3000 gofiber ./app -prod
 ```
 
 Go to http://localhost:3000:
-
-
-![Go Fiber Docker Boilerplate](./go_fiber_boilerplate.gif)
