@@ -4,7 +4,6 @@ import (
 	"Corap-web/models"
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"runtime"
 	"time"
@@ -12,6 +11,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
@@ -26,7 +26,7 @@ var (
 func Connect() {
 	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("Error loading .env file")
+		log.Info("No .env file found.")
 	}
 	maxConn := runtime.NumCPU() * 4
 	if fiber.IsChild() {
@@ -47,7 +47,7 @@ func Connect() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Connected with Database")
+	log.Info("Connected with Database")
 }
 
 func GetDatabaseSize() string {

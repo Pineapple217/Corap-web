@@ -5,9 +5,9 @@ import (
 	"Corap-web/handlers"
 
 	"flag"
-	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/cache"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -24,7 +24,7 @@ var (
 func main() {
 	flag.Parse()
 
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.SetLevel(log.LevelInfo)
 
 	database.Connect()
 
