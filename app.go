@@ -46,6 +46,7 @@ func main() {
 
 	app.Get("/", handlers.Home)
 
+	app.Get("/devices/table", handlers.DevicesTable)
 	app.Get("/devices/:deveui", handlers.Device)
 	app.Get("/devices", handlers.Devices)
 

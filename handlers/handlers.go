@@ -25,6 +25,12 @@ func Devices(c *fiber.Ctx) error {
 	}, "layouts/main")
 }
 
+func DevicesTable(c *fiber.Ctx) error {
+	return c.Render("partials/devices_table", fiber.Map{
+		"Devices": database.GetDevices(),
+	})
+}
+
 func Device(c *fiber.Ctx) error {
 	device, err := database.GetDevice(c.Params("deveui"))
 	if err != nil {
