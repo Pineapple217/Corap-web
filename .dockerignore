@@ -1,1 +1,6 @@
 *_test.go
+*.MD
+*.env
+.gitignore
+tlw.css
+.github

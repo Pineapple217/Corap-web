@@ -6,6 +6,12 @@
 go run app.go
 ```
 
+### Tailwindcss
+
+```bash
+.\tailwindcss.exe -o ./static/public/css/tlw.css --minify
+```
+
 ### Use local container
 
 ```
