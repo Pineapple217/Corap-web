@@ -14,15 +14,11 @@ func NotFound(c *fiber.Ctx) error {
 }
 
 func Home(c *fiber.Ctx) error {
-	return c.Render("index", fiber.Map{
-		"Title": "Hello, World!",
-	}, "layouts/main")
+	return c.Render("index", fiber.Map{}, "layouts/main")
 }
 
 func Devices(c *fiber.Ctx) error {
-	return c.Render("devices", fiber.Map{
-		"Devices": database.GetDevices(),
-	}, "layouts/main")
+	return c.Render("devices", fiber.Map{}, "layouts/main")
 }
 
 func DevicesTable(c *fiber.Ctx) error {
