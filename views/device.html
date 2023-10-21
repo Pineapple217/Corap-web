@@ -151,11 +151,13 @@
     let i;
     let tabContent;
     const selectedStyle = "border-cyan-500";
+    const notSelectedStyle = "border-transparent";
     tabButtons = document.getElementsByClassName("tab-button");
     for (i = 0; i < tabButtons.length; i++) {
       tabButtons[i].classList.remove(selectedStyle);
     }
     event.target.classList.add(selectedStyle);
+    event.target.classList.remove(notSelectedStyle);
 
     tabContent = document.getElementsByClassName("tab-content");
 
