@@ -12,6 +12,8 @@ COPY . .
 
 # Downloads all the dependencies in advance (could be left out, but it's more clear this way)
 RUN go mod download
+RUN go install github.com/a-h/templ/cmd/templ@latest
+RUN templ generate
 
 # Builds the application as a staticly linked one, to allow it to run on alpine
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o app .
@@ -28,10 +30,6 @@ WORKDIR /app
 # Create the `public` dir and copy all the assets into it
 RUN mkdir ./static
 COPY ./static ./static
-
-RUN mkdir ./views
-COPY ./views ./views
-
 
 COPY --from=build /go/src/Corap-web/app .
 COPY --from=build /go/src/Corap-web/tlw.css ./static/public/css/tlw.css

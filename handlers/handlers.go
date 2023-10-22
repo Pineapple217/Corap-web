@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	com "Corap-web/components"
 	"Corap-web/database"
 	"Corap-web/models"
 
@@ -10,31 +11,36 @@ import (
 )
 
 func NotFound(c *fiber.Ctx) error {
-	return c.Status(404).SendFile("./static/private/404.html")
+	return c.Status(fiber.StatusNotFound).SendFile("./static/private/404.html")
 }
 
 func Home(c *fiber.Ctx) error {
-	return c.Render("index", fiber.Map{}, "layouts/main")
+	return c.Redirect("devices", fiber.StatusMovedPermanently)
+	// return RenderComponent(c, com.Main())
 }
 
 func Devices(c *fiber.Ctx) error {
-	return c.Render("devices", fiber.Map{}, "layouts/main")
+	return RenderComponent(c,
+		com.Devices(),
+	)
 }
 
 func DevicesTable(c *fiber.Ctx) error {
-	return c.Render("partials/devices_table", fiber.Map{
-		"Devices": database.GetDevices(),
-	})
+	return RenderComponent(c,
+		com.DeviceTable(
+			database.GetDevices(),
+		),
+	)
 }
 
 func Device(c *fiber.Ctx) error {
 	device, err := database.GetDevice(c.Params("deveui"))
 	if err != nil {
-		return c.Status(404).SendFile("./static/private/404.html")
+		return NotFound(c)
 	}
-	return c.Render("device", fiber.Map{
-		"Device": device,
-	}, "layouts/main")
+	return RenderComponent(c,
+		com.Device(device),
+	)
 }
 
 func DevicePlots(c *fiber.Ctx) error {
@@ -51,7 +57,7 @@ func DevicePlots(c *fiber.Ctx) error {
 		plotType = models.Humidity
 		plotTypeStr = "Humidity"
 	default:
-		return c.Status(404).SendFile("./static/private/404.html")
+		return NotFound(c)
 	}
 
 	dateRange, err := strconv.ParseInt(c.Query("range"), 10, 0)
@@ -60,24 +66,30 @@ func DevicePlots(c *fiber.Ctx) error {
 	}
 
 	datas, timestamps := database.GetDeviceScrapes(c.Params("deveui"), plotType, int(dateRange))
-	return c.Render("partials/device_plot", fiber.Map{
-		"PlotType": plotTypeStr,
-		"PlotData": datas,
-		"PlotTime": timestamps,
-	})
+	return RenderComponent(c,
+		com.DevicePlot(
+			plotTypeStr,
+			datas,
+			timestamps,
+		),
+	)
 }
 
 func Jobs(c *fiber.Ctx) error {
-	return c.Render("jobs", fiber.Map{
-		"Jobs": database.GetSchedulerJobs(),
-	}, "layouts/main")
+	return RenderComponent(c,
+		com.Jobs(
+			database.GetSchedulerJobs(),
+		),
+	)
 }
 
 func Scrape(c *fiber.Ctx) error {
-	return c.Render("scrape", fiber.Map{
-		"ScrapeCount":  database.GetScrapeCount(),
-		"DatabaseSize": database.GetDatabaseSize(),
-		"BatchCount":   database.GetBatchCount(),
-		"LastScraped":  database.GetTimeLastScrape().Format("2006-01-02 15:04:05"),
-	}, "layouts/main")
+	return RenderComponent(c,
+		com.Scrape(
+			database.GetTimeLastScrape(),
+			database.GetDatabaseSize(),
+			database.GetScrapeCount(),
+			database.GetBatchCount(),
+		),
+	)
 }

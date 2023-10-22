@@ -4,3 +4,5 @@
 .gitignore
 tlw.css
 .github
+tmp
+.air.toml

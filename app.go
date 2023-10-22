@@ -12,7 +12,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/utils"
-	"github.com/gofiber/template/html/v2"
 )
 
 var (
@@ -28,11 +27,8 @@ func main() {
 
 	database.Connect()
 
-	engine := html.New("./views", ".html")
-
 	app := fiber.New(fiber.Config{
 		Prefork: *prod, // go run app.go -prod
-		Views:   engine,
 	})
 
 	// Middleware

@@ -1,0 +1,65 @@
+package components
+
+// import "strconv"
+import "time"
+import "fmt"
+import "strings"
+
+templ Scrape(lastScraped time.Time, databaseSize string, scrapeCount int, batchCount int) {
+	@Main() {
+		<div class="py-24 sm:py-32">
+			<div class="mx-auto max-w-7xl px-6 lg:px-8">
+				<dl class="grid grid-cols-1 gap-x-8 gap-y-16 text-center lg:grid-cols-4">
+					<div class="mx-auto flex max-w-xs flex-col gap-y-4">
+						<dt class="text-base leading-7 text-gray-600">Last scraped</dt>
+						<dd
+ 							class="order-first text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl"
+						>
+							{ lastScraped.Format("2006-01-02 15:04:05") }
+						</dd>
+					</div>
+					<div class="mx-auto flex max-w-xs flex-col gap-y-4">
+						<dt class="text-base leading-7 text-gray-600">Database size</dt>
+						<dd
+ 							class="order-first text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl"
+						>
+							{ databaseSize }
+						</dd>
+					</div>
+					<div class="mx-auto flex max-w-xs flex-col gap-y-4">
+						<dt class="text-base leading-7 text-gray-600">Scrape count</dt>
+						<dd
+ 							class="order-first text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl"
+						>
+							{ formatNumberWithSpaces(scrapeCount) }
+						</dd>
+					</div>
+					<div class="mx-auto flex max-w-xs flex-col gap-y-4">
+						<dt class="text-base leading-7 text-gray-600">Batch count</dt>
+						<dd
+ 							class="order-first text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl"
+						>
+							{ formatNumberWithSpaces(batchCount) }
+						</dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+	}
+}
+
+func formatNumberWithSpaces(number int) string {
+	numberStr := fmt.Sprintf("%d", number)
+	var parts []string
+	for len(numberStr) > 0 {
+		end := len(numberStr)
+		start := end - 3
+		if start < 0 {
+			start = 0
+		}
+		parts = append([]string{numberStr[start:end]}, parts...)
+		numberStr = numberStr[:start]
+	}
+	formattedNumber := strings.Join(parts, " ")
+	return formattedNumber
+}

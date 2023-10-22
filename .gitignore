@@ -25,3 +25,6 @@ tlw.css
 test.db
 .env
 docker.env
+
+tmp
+*_templ.go
