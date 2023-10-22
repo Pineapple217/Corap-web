@@ -27,4 +27,3 @@ test.db
 docker.env
 
 tmp
-*_templ.go
