@@ -3,12 +3,14 @@ package main
 import (
 	"Corap-web/database"
 	"Corap-web/handlers"
+	"time"
 
 	"flag"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/cache"
+	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/utils"
@@ -32,6 +34,11 @@ func main() {
 	})
 
 	// Middleware
+	app.Use(limiter.New(limiter.Config{
+		Max:               300,
+		Expiration:        1 * time.Minute,
+		LimiterMiddleware: limiter.SlidingWindow{},
+	}))
 	app.Use(recover.New())
 	app.Use(logger.New())
 	app.Use(cache.New(cache.Config{
