@@ -104,7 +104,7 @@ func GetDevices() []models.Device {
 								ROW_NUMBER() OVER (PARTITION BY d.deveui ORDER BY s.time_scraped DESC) AS rn
 							FROM device d
 							JOIN scrape s ON d.deveui = s.deveui
-							JOIN analyse_device a ON a.device_id = d.deveui
+							JOIN analysis_devices a ON a.device_id = d.deveui
 							)
 							SELECT deveui, name, hashedname, is_defect, temp, co2, humidity
 							FROM RankedScrapeData
@@ -136,7 +136,7 @@ func GetDevices() []models.Device {
 
 func GetDevice(deveui string) (models.Device, error) {
 	row := db.QueryRow(context.Background(), `SELECT d.deveui, name, hashedname, is_defect, temp, co2, humidity FROM device d
-						join analyse_device a on a.device_id = d.deveui
+						join analysis_devices a on a.device_id = d.deveui
 						join scrape s on d.deveui = s.deveui
 						WHERE d.deveui = $1
 						ORDER BY time_scraped DESC
