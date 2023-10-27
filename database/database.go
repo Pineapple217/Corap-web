@@ -14,7 +14,6 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/joho/godotenv"
 )
 
 var (
@@ -24,10 +23,7 @@ var (
 )
 
 func Connect() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Info("No .env file found.")
-	}
+	var err error
 	maxConn := runtime.NumCPU() * 4
 	if fiber.IsChild() {
 		maxConn = 5

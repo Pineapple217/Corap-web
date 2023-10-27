@@ -14,6 +14,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/fiber/v2/utils"
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -23,6 +24,11 @@ var (
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Info("No .env file found.")
+	}
+
 	flag.Parse()
 
 	log.SetLevel(log.LevelInfo)

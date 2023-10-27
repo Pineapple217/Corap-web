@@ -1,5 +1,7 @@
 package components
 
+import "os"
+
 templ Main() {
 	<!DOCTYPE html>
 	<html>
@@ -38,6 +40,7 @@ templ Main() {
 				</div>
 			</div>
 			{ children... }
+			@SafeString(os.Getenv("ANALYTICS"))
 		</body>
 	</html>
 }
