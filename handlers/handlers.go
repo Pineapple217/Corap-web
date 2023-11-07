@@ -15,8 +15,7 @@ func NotFound(c *fiber.Ctx) error {
 }
 
 func Home(c *fiber.Ctx) error {
-	return c.Redirect("devices", fiber.StatusMovedPermanently)
-	// return RenderComponent(c, com.Main())
+	return c.RedirectToRoute("Devices", fiber.Map{}, fiber.StatusMovedPermanently)
 }
 
 func Devices(c *fiber.Ctx) error {
@@ -44,7 +43,7 @@ func Device(c *fiber.Ctx) error {
 }
 
 func DevicePlots(c *fiber.Ctx) error {
-	var plotType models.PlotType
+	var plotType models.DataType
 	var plotTypeStr string
 	switch c.Params("plot_type") {
 	case string(models.Temp):
@@ -90,6 +89,16 @@ func Scrape(c *fiber.Ctx) error {
 			database.GetDatabaseSize(),
 			database.GetScrapeCount(),
 			database.GetBatchCount(),
+		),
+	)
+}
+
+func Trophies(c *fiber.Ctx) error {
+	return RenderComponent(c,
+		com.Trophies(
+			database.Gettrophies(models.CO2),
+			database.Gettrophies(models.Temp),
+			database.Gettrophies(models.Humidity),
 		),
 	)
 }

@@ -8,11 +8,12 @@ RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/downlo
 RUN chmod +x tailwindcss-linux-x64
 RUN mv tailwindcss-linux-x64 tailwindcss
 
+RUN go install github.com/a-h/templ/cmd/templ@latest
+
 COPY . .
 
 # Downloads all the dependencies in advance (could be left out, but it's more clear this way)
 RUN go mod download
-RUN go install github.com/a-h/templ/cmd/templ@latest
 RUN templ generate
 
 # Builds the application as a staticly linked one, to allow it to run on alpine

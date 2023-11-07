@@ -1,0 +1,56 @@
+package components
+
+import "Corap-web/models"
+import "strconv"
+
+templ Trophies(co2_trophies [3]models.Trophy, temp_trophies [3]models.Trophy, humidity_trophies [3]models.Trophy) {
+	@Main() {
+		<div class="max-w-5xl mx-auto p-3">
+			<h1 class="text-3xl mb-4 mt-8">Co2</h1>
+			<div class="grid grid-cols-3 gap-4">
+				for i, trophy := range co2_trophies {
+					<div class="min-w-fit">
+						<h2>{ "#" + strconv.Itoa(i+1) }</h2>
+						<div class="bg-white p-4 rounded shadow-md">
+							<h2 class="text-xl ">{ trophy.DevName }</h2>
+							<p class="text-gray-600 mb-4">{ trophy.TimeUpdated.Format("2006-01-02 15:04") }</p>
+							<p>{ strconv.Itoa(trophy.Co2) }</p>
+							<p class="text-gray-500">{ strconv.FormatFloat(float64(trophy.Temp), 'f', -1, 32) }</p>
+							<p class="text-gray-500">{ strconv.Itoa(trophy.Humidity) }</p>
+						</div>
+					</div>
+				}
+			</div>
+			<h1 class="text-3xl mb-4 mt-8">Temperature</h1>
+			<div class="grid grid-cols-3 gap-4">
+				for i, trophy := range temp_trophies {
+					<div>
+						<h2>{ "#" + strconv.Itoa(i+1) }</h2>
+						<div class="bg-white p-4 rounded shadow-md">
+							<h2 class="text-xl ">{ trophy.DevName }</h2>
+							<p class="text-gray-600 mb-4">{ trophy.TimeUpdated.Format("2006-01-02 15:04") }</p>
+							<p class="text-gray-500">{ strconv.Itoa(trophy.Co2) }</p>
+							<p>{ strconv.FormatFloat(float64(trophy.Temp), 'f', -1, 32) }</p>
+							<p class="text-gray-500">{ strconv.Itoa(trophy.Humidity) }</p>
+						</div>
+					</div>
+				}
+			</div>
+			<h1 class="text-3xl mb-4 mt-8">Humidity</h1>
+			<div class="grid grid-cols-3 gap-4">
+				for i, trophy := range humidity_trophies {
+					<div>
+						<h2>{ "#" + strconv.Itoa(i+1) }</h2>
+						<div class="bg-white p-4 rounded shadow-md">
+							<h2 class="text-xl ">{ trophy.DevName }</h2>
+							<p class="text-gray-600 mb-4">{ trophy.TimeUpdated.Format("2006-01-02 15:04") }</p>
+							<p class="text-gray-500">{ strconv.Itoa(trophy.Co2) }</p>
+							<p class="text-gray-500">{ strconv.FormatFloat(float64(trophy.Temp), 'f', -1, 32) }</p>
+							<p>{ strconv.Itoa(trophy.Humidity) }</p>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	}
+}

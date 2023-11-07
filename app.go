@@ -57,13 +57,15 @@ func main() {
 
 	app.Get("/devices/table", handlers.DevicesTable)
 	app.Get("/devices/:deveui", handlers.Device)
-	app.Get("/devices", handlers.Devices)
+	app.Get("/devices", handlers.Devices).Name("Devices")
 
 	app.Get("/jobs", handlers.Jobs)
 
 	app.Get("/scrape", handlers.Scrape)
 
 	app.Get("/devices/:deveui/plots/:plot_type", handlers.DevicePlots)
+
+	app.Get("/trophies", handlers.Trophies)
 
 	// Setup static files
 	app.Static("/", "./static/public")
