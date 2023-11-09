@@ -96,9 +96,9 @@ func Scrape(c *fiber.Ctx) error {
 func Trophies(c *fiber.Ctx) error {
 	return RenderComponent(c,
 		com.Trophies(
-			database.Gettrophies(models.CO2),
-			database.Gettrophies(models.Temp),
-			database.Gettrophies(models.Humidity),
+			database.GetTrophies(models.CO2),
+			database.GetTrophies(models.Temp),
+			database.GetTrophies(models.Humidity),
 		),
 	)
 }
