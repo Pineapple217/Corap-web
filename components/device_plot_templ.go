@@ -11,8 +11,6 @@ import "bytes"
 
 import "time"
 
-import "encoding/json"
-
 func DevicePlot(plotType string, datas []float32, timestamps []time.Time) templ.Component {
 	return templ.ComponentFunc(func(templ_7745c5c3_Ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -34,11 +32,11 @@ func DevicePlot(plotType string, datas []float32, timestamps []time.Time) templ.
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" style=\"width: 800px; height: 450px;\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = onLoad(graph(plotType, datas, timestamps), plotType, datas, timestamps).Render(templ_7745c5c3_Ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = OnLoad(graph(plotType, datas, timestamps), plotType, datas, timestamps).Render(templ_7745c5c3_Ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -46,33 +44,6 @@ func DevicePlot(plotType string, datas []float32, timestamps []time.Time) templ.
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
 		}
 		return templ_7745c5c3_Err
-	})
-}
-
-func onLoad(script templ.ComponentScript, params ...interface{}) templ.Component {
-	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		if _, err = io.WriteString(w, `<script type="text/javascript">`+"\r\n"+script.Function+"\r\n"+script.Name+"("); err != nil {
-			return err
-		}
-		paramsLen := len(params)
-		for i, param := range params {
-			paramEncodedBytes, err := json.Marshal(param)
-			if err != nil {
-				return err
-			}
-			if _, err = w.Write(paramEncodedBytes); err != nil {
-				return err
-			}
-			if i+1 != paramsLen {
-				if _, err = io.WriteString(w, ", "); err != nil {
-					return err
-				}
-			}
-		}
-		if _, err = io.WriteString(w, ")\r\n</script>"); err != nil {
-			return err
-		}
-		return nil
 	})
 }
 

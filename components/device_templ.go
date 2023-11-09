@@ -31,7 +31,7 @@ func Device(device models.Device) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"py-2 inline-block sm:px-6 lg:px-8\"><div class=\"lg:flex lg:items-center lg:justify-between\"><div class=\"min-w-0 flex-1\"><h2 class=\"text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"py-2 inline-block sm:px-6 lg:px-8\"><div class=\"lg:flex lg:items-center lg:justify-between rounded p-2 shadow-md\"><div class=\"min-w-0 flex-1\"><h2 class=\"text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -112,7 +112,7 @@ func Device(device models.Device) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></div></div><header><h2></h2></header><br><label for=\"time-range\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></div></div><div class=\"shadow-md mt-6 p-2 rounded\"><label for=\"time-range\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -192,7 +192,7 @@ func Device(device models.Device) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-include=\"[name=range]\" hx-trigger=\"load, change from:#time-range\" style=\"width: 800px; height: 600px; display: none\"></div><div id=\"co2\" class=\"tab-content\" hx-get=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-include=\"[name=range]\" hx-trigger=\"load, change from:#time-range\" style=\"width: 800px; height: 450px; display: none\"></div><div id=\"co2\" class=\"tab-content\" hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -200,7 +200,7 @@ func Device(device models.Device) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-include=\"[name=range]\" hx-trigger=\"load, change from:#time-range\" style=\"width: 800px; height: 600px; display: none\"></div><div id=\"humidity\" class=\"tab-content\" hx-get=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-include=\"[name=range]\" hx-trigger=\"load, change from:#time-range\" style=\"width: 800px; height: 450px; display: none\"></div><div id=\"humidity\" class=\"tab-content\" hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -208,7 +208,7 @@ func Device(device models.Device) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-include=\"[name=range]\" hx-trigger=\"load, change from:#time-range\" style=\"width: 800px; height: 600px; display: none\"></div></div><script>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-include=\"[name=range]\" hx-trigger=\"load, change from:#time-range\" style=\"width: 800px; height: 450px; display: none\"></div></div></div><script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

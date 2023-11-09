@@ -6,7 +6,7 @@ import "strconv"
 templ Device(device models.Device) {
 	@Main() {
 		<div class="py-2 inline-block sm:px-6 lg:px-8">
-			<div class="lg:flex lg:items-center lg:justify-between">
+			<div class="lg:flex lg:items-center lg:justify-between rounded p-2 shadow-md">
 				<div class="min-w-0 flex-1">
 					<h2
  						class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight"
@@ -102,71 +102,69 @@ templ Device(device models.Device) {
 					</div>
 				</div>
 			</div>
-			<header>
-				<h2></h2>
-			</header>
-			<br/>
-			<label for="time-range">Select a Time Range:</label>
-			<select name="range" id="time-range">
-				<option value="1">24 hours</option>
-				<option value="7">1 week</option>
-				<option value="30">30 days</option>
-				<option value="90">90 days</option>
-			</select>
-			<div class="text-base font-medium text-center border-b border-gray-200">
-				<ul class="flex flex-wrap -mb-px">
-					<li class="mr-2">
-						<button
- 							class="tab-button inline-block p-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-800 hover:border-cyan-500"
- 							id="init-tab"
- 							onclick="openTab(event, &#39;temp&#39;)"
-						>
-							Temperature
-						</button>
-					</li>
-					<li class="mr-2">
-						<button
- 							class="tab-button inline-block p-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-800 hover:border-cyan-500"
- 							onclick="openTab(event, &#39;co2&#39;)"
-						>
-							Co2
-						</button>
-					</li>
-					<li class="mr-2">
-						<button
- 							class="tab-button inline-block p-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-800 hover:border-cyan-500"
- 							onclick="openTab(event, &#39;humidity&#39;)"
-						>
-							Humidity
-						</button>
-					</li>
-				</ul>
+			<div class="shadow-md mt-6 p-2 rounded">
+				<label for="time-range">Select a Time Range:</label>
+				<select name="range" id="time-range">
+					<option value="1">24 hours</option>
+					<option value="7">1 week</option>
+					<option value="30">30 days</option>
+					<option value="90">90 days</option>
+				</select>
+				<div class="text-base font-medium text-center border-b border-gray-200">
+					<ul class="flex flex-wrap -mb-px">
+						<li class="mr-2">
+							<button
+ 								class="tab-button inline-block p-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-800 hover:border-cyan-500"
+ 								id="init-tab"
+ 								onclick="openTab(event, &#39;temp&#39;)"
+							>
+								Temperature
+							</button>
+						</li>
+						<li class="mr-2">
+							<button
+ 								class="tab-button inline-block p-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-800 hover:border-cyan-500"
+ 								onclick="openTab(event, &#39;co2&#39;)"
+							>
+								Co2
+							</button>
+						</li>
+						<li class="mr-2">
+							<button
+ 								class="tab-button inline-block p-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-800 hover:border-cyan-500"
+ 								onclick="openTab(event, &#39;humidity&#39;)"
+							>
+								Humidity
+							</button>
+						</li>
+					</ul>
+				</div>
+				<hr/>
+				<div
+ 					id="temp"
+ 					class="tab-content"
+ 					hx-get={ "/devices/" + device.Deveui + "/plots/temp" }
+ 					hx-include="[name=range]"
+ 					hx-trigger="load, change from:#time-range"
+ 					style="width: 800px; height: 450px; display: none"
+				></div>
+				<div
+ 					id="co2"
+ 					class="tab-content"
+ 					hx-get={ "/devices/" + device.Deveui + "/plots/co2" }
+ 					hx-include="[name=range]"
+ 					hx-trigger="load, change from:#time-range"
+ 					style="width: 800px; height: 450px; display: none"
+				></div>
+				<div
+ 					id="humidity"
+ 					class="tab-content"
+ 					hx-get={ "/devices/" + device.Deveui + "/plots/humidity" }
+ 					hx-include="[name=range]"
+ 					hx-trigger="load, change from:#time-range"
+ 					style="width: 800px; height: 450px; display: none"
+				></div>
 			</div>
-			<hr/>
-			<div
- 				id="temp"
- 				class="tab-content"
- 				hx-get={ "/devices/" + device.Deveui + "/plots/temp" }
- 				hx-include="[name=range]"
- 				hx-trigger="load, change from:#time-range"
- 				style="width: 800px; height: 600px; display: none"
-			></div>
-			<div
- 				id="co2"
- 				class="tab-content"
- 				hx-get={ "/devices/" + device.Deveui + "/plots/co2" }
- 				hx-include="[name=range]"
- 				hx-trigger="load, change from:#time-range"
- 				style="width: 800px; height: 600px; display: none"
-			></div>
-			<div
- 				id="humidity"
- 				class="tab-content"
- 				hx-get={ "/devices/" + device.Deveui + "/plots/humidity" }
- 				hx-include="[name=range]"
- 				hx-trigger="load, change from:#time-range"
- 				style="width: 800px; height: 600px; display: none"
-			></div>
 		</div>
 		<script>
 			function openTab(event, tabName) {
