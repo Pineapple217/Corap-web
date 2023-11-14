@@ -11,16 +11,46 @@ import (
 )
 
 func GetDevices() []models.Device {
-	rows, err := db.Query(context.Background(), `WITH RankedScrapeData AS (
-							SELECT d.deveui, d.name, d.hashedname, a.is_defect, s.temp, s.co2, s.humidity, s.time_scraped,
-								ROW_NUMBER() OVER (PARTITION BY d.deveui ORDER BY s.time_scraped DESC) AS rn
-							FROM device d
-							JOIN scrape s ON d.deveui = s.deveui
-							JOIN analysis_devices a ON a.device_id = d.deveui
-							)
-							SELECT deveui, name, hashedname, is_defect, temp, co2, humidity
-							FROM RankedScrapeData
-							WHERE rn = 1;`)
+	rows, err := db.Query(context.Background(), `
+		WITH LatestScrape AS (
+			SELECT
+				d.deveui,
+				MAX(s.time_scraped) AS latest_time_scraped
+			FROM
+				device d
+				LEFT JOIN scrape s ON d.deveui = s.deveui AND s.time_scraped >= NOW() - '1 hour'::INTERVAL
+			GROUP BY
+				d.deveui
+		),
+		RankedScrapeData AS (
+			SELECT
+				d.deveui,
+				d.name,
+				d.hashedname,
+				a.is_defect,
+				COALESCE(s.temp, -1) AS temp,
+				COALESCE(s.co2, -1) AS co2,
+				COALESCE(s.humidity, -1) AS humidity,
+				COALESCE(s.time_scraped, NOW()) AS time_scraped,
+				ROW_NUMBER() OVER (PARTITION BY d.deveui ORDER BY s.time_scraped DESC) AS rn
+			FROM
+				device d
+				JOIN analysis_devices a ON a.device_id = d.deveui
+				LEFT JOIN scrape s ON d.deveui = s.deveui AND s.time_scraped = (SELECT latest_time_scraped FROM LatestScrape WHERE deveui = d.deveui)
+		)
+		SELECT
+			deveui,
+			name,
+			hashedname,
+			is_defect,
+			temp,
+			co2,
+			humidity
+		FROM
+			RankedScrapeData
+		WHERE
+			rn = 1;
+	`)
 	if err != nil {
 		log.Fatal(err)
 	}
