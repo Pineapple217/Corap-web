@@ -6,7 +6,7 @@
 go run app.go
 ```
 
-### Templ
+### [Templ](https://github.com/a-h/templ)
 
 ```bash
 templ generate
