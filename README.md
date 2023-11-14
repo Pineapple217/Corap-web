@@ -6,6 +6,12 @@
 go run app.go
 ```
 
+### Templ
+
+```bash
+templ generate
+```
+
 ### Tailwindcss
 
 ```bash
