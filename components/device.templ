@@ -140,28 +140,34 @@ templ Device(device models.Device) {
 					</ul>
 				</div>
 				<hr/>
+				<div style="width: 800px; height: 450px;" class="ind htmx-indicator items-center justify-center">
+					<div class="loader border-cyan-500"></div>
+				</div>
 				<div
  					id="temp"
- 					class="tab-content"
- 					hx-get={ "/devices/" + device.Deveui + "/plots/temp" }
+ 					class="tab-content htmx-reverse-indicator ind"
+ 					hx-get={ "/devices/" + device.Deveui + "/plot/line/temp" }
  					hx-include="[name=range]"
  					hx-trigger="load, change from:#time-range"
+ 					hx-indicator=".ind"
  					style="width: 800px; height: 450px; display: none"
 				></div>
 				<div
  					id="co2"
- 					class="tab-content"
- 					hx-get={ "/devices/" + device.Deveui + "/plots/co2" }
+ 					class="tab-content htmx-reverse-indicator ind"
+ 					hx-get={ "/devices/" + device.Deveui + "/plot/line/co2" }
  					hx-include="[name=range]"
  					hx-trigger="load, change from:#time-range"
+ 					hx-indicator=".ind"
  					style="width: 800px; height: 450px; display: none"
 				></div>
 				<div
  					id="humidity"
- 					class="tab-content"
- 					hx-get={ "/devices/" + device.Deveui + "/plots/humidity" }
+ 					class="tab-content htmx-reverse-indicator ind"
+ 					hx-get={ "/devices/" + device.Deveui + "/plot/line/humidity" }
  					hx-include="[name=range]"
  					hx-trigger="load, change from:#time-range"
+ 					hx-indicator=".ind"
  					style="width: 800px; height: 450px; display: none"
 				></div>
 			</div>

@@ -184,31 +184,31 @@ func Device(device models.Device) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></li></ul></div><hr><div id=\"temp\" class=\"tab-content\" hx-get=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></li></ul></div><hr><div style=\"width: 800px; height: 450px;\" class=\"ind htmx-indicator items-center justify-center\"><div class=\"loader border-cyan-500\"></div></div><div id=\"temp\" class=\"tab-content htmx-reverse-indicator ind\" hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("/devices/" + device.Deveui + "/plots/temp"))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("/devices/" + device.Deveui + "/plot/line/temp"))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-include=\"[name=range]\" hx-trigger=\"load, change from:#time-range\" style=\"width: 800px; height: 450px; display: none\"></div><div id=\"co2\" class=\"tab-content\" hx-get=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-include=\"[name=range]\" hx-trigger=\"load, change from:#time-range\" hx-indicator=\".ind\" style=\"width: 800px; height: 450px; display: none\"></div><div id=\"co2\" class=\"tab-content htmx-reverse-indicator ind\" hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("/devices/" + device.Deveui + "/plots/co2"))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("/devices/" + device.Deveui + "/plot/line/co2"))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-include=\"[name=range]\" hx-trigger=\"load, change from:#time-range\" style=\"width: 800px; height: 450px; display: none\"></div><div id=\"humidity\" class=\"tab-content\" hx-get=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-include=\"[name=range]\" hx-trigger=\"load, change from:#time-range\" hx-indicator=\".ind\" style=\"width: 800px; height: 450px; display: none\"></div><div id=\"humidity\" class=\"tab-content htmx-reverse-indicator ind\" hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("/devices/" + device.Deveui + "/plots/humidity"))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("/devices/" + device.Deveui + "/plot/line/humidity"))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-include=\"[name=range]\" hx-trigger=\"load, change from:#time-range\" style=\"width: 800px; height: 450px; display: none\"></div></div></div><script>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-include=\"[name=range]\" hx-trigger=\"load, change from:#time-range\" hx-indicator=\".ind\" style=\"width: 800px; height: 450px; display: none\"></div></div></div><script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

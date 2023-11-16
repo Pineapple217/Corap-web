@@ -63,7 +63,7 @@ func main() {
 
 	app.Get("/scrape", handlers.Scrape)
 
-	app.Get("/devices/:deveui/plots/:plot_type", handlers.DevicePlots)
+	app.Get("/devices/:deveui/plot/line/:plot_type", handlers.DeviceLinePlots)
 
 	app.Get("/trophies", handlers.Trophies)
 
