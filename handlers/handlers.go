@@ -42,21 +42,10 @@ func Device(c *fiber.Ctx) error {
 	)
 }
 
-func DevicePlots(c *fiber.Ctx) error {
-	var plotType models.DataType
-	var plotTypeStr string
-	switch c.Params("plot_type") {
-	case string(models.Temp):
-		plotType = models.Temp
-		plotTypeStr = "Temperature"
-	case string(models.CO2):
-		plotType = models.CO2
-		plotTypeStr = "Co2"
-	case string(models.Humidity):
-		plotType = models.Humidity
-		plotTypeStr = "Humidity"
-	default:
-		return NotFound(c)
+func DeviceLinePlots(c *fiber.Ctx) error {
+	plotType, err := FormatDataType(c.Params("plot_type"))
+	if err != nil {
+		NotFound(c)
 	}
 
 	dateRange, err := strconv.ParseInt(c.Query("range"), 10, 0)
@@ -65,9 +54,26 @@ func DevicePlots(c *fiber.Ctx) error {
 	}
 
 	datas, timestamps := database.GetDeviceScrapes(c.Params("deveui"), plotType, int(dateRange))
+
 	return RenderComponent(c,
 		com.DevicePlot(
-			plotTypeStr,
+			string(plotType),
+			datas,
+			timestamps,
+		),
+	)
+}
+
+func DeviceHeatmap(c *fiber.Ctx) error {
+	plotType, err := FormatDataType(c.Params("plot_type"))
+	if err != nil {
+		NotFound(c)
+	}
+
+	datas, timestamps := database.GetDeviceScrapesAvg(c.Params("deveui"), plotType)
+	return RenderComponent(c,
+		com.DeviceHeatmap(
+			string(plotType),
 			datas,
 			timestamps,
 		),

@@ -1,17 +1,99 @@
 package components
 
-import "time"
+import (
+	"reflect"
+	"time"
+	"fmt"
+)
 
 templ DevicePlot(plotType string, datas []float32, timestamps []time.Time) {
-	<div id={ "plot-" +  plotType } style="width: 800px; height: 450px;"></div>
-	@OnLoad(graph(plotType, datas, timestamps), plotType, datas, timestamps)
+	<div id={ "line-" +  plotType } style="width: 800px; height: 450px;"></div>
+	@OnLoad(lineGraph(plotType, datas, timestamps), plotType, datas, timestamps)
 }
 
-script graph(plotType string, datas []float32, timestamps []time.Time) {
+script lineGraph(plotType string, datas []float32, timestamps []time.Time) {
     var trace1 = {
         x: timestamps,
         y: datas,
         type: "scatter",
     };
-    Plotly.newPlot("plot-" + plotType, [trace1]);
+    Plotly.newPlot("line-" + plotType, [trace1]);
+}
+
+templ DeviceHeatmap(plotType string, datas []float32, timestamps []time.Time) {
+	<div id={ "heatmap-" +  plotType } style="width: 800px; height: 450px;"></div>
+	if d := ChunkifyByWeek(datas, int(timestamps[0].Weekday())); true {
+		@OnLoad(graph(plotType, d, timestamps), plotType, d, timestamps)
+	}
+}
+
+script graph(plotType string, datas interface{}, timestamps []time.Time) {
+    let o = datas
+    var trace1 = [{
+        z: o,
+        x: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+		y: timestamps.reduce((acc, value, index) => (index % 7 === 6) ? [...acc, value] : acc, []),
+		hovertemplate: '%{z:.2f}',
+        type: "heatmap",
+		colorscale: 'Portland',
+    }];
+	var layout = {
+		yaxis: { autorange: "reversed" }
+	}
+    Plotly.newPlot("heatmap-" + plotType, trace1, layout);
+}
+
+func ChunkifyByWeek(input []float32, startDay int) (result interface{}) {
+	chunkSize := 7
+	nilSlice := make([]float32, chunkSize-startDay)
+	newSlice := append(nilSlice, input...)
+
+	inputValue := reflect.ValueOf(newSlice)
+
+	if inputValue.Kind() != reflect.Slice {
+		panic("Input must be a slice")
+	}
+
+	length := inputValue.Len()
+
+	// Calculate the number of chunks needed
+	numChunks := ((length + chunkSize - 1) / chunkSize) - 1
+
+	// Create a slice to hold the result
+	resultSlice := reflect.MakeSlice(reflect.SliceOf(inputValue.Type()), numChunks, numChunks)
+
+	for i := 0; i < numChunks; i++ {
+		// Calculate start and end indices for each chunk
+		start := i * chunkSize
+		end := (i + 1) * chunkSize
+
+		if i == 0 {
+			start += 7 - startDay
+		}
+		if end > length {
+			end = length
+		}
+
+		subarray := inputValue.Slice(start, end)
+		reversed := reverseImmutableSlice(subarray)
+		resultSlice.Index(i).Set(reversed)
+	}
+
+	return resultSlice.Interface()
+}
+
+func reverseImmutableSlice(v reflect.Value) reflect.Value {
+	if v.Kind() != reflect.Slice {
+		fmt.Println("Not a slice")
+		return reflect.Value{}
+	}
+
+	length := v.Len()
+	reversed := reflect.MakeSlice(v.Type(), length, length)
+
+	for i := 0; i < length; i++ {
+		reversed.Index(i).Set(v.Index(length - i - 1))
+	}
+
+	return reversed
 }

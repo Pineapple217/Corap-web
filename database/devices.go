@@ -120,3 +120,32 @@ func GetDeviceScrapes(deveui string, plotType models.DataType, dateRange int) ([
 	}
 	return datas, timestamps
 }
+
+func GetDeviceScrapesAvg(deveui string, plotType models.DataType) ([]float32, []time.Time) {
+	rows, err := db.Query(context.Background(), fmt.Sprintf(`
+							select AVG(%s), DATE_TRUNC('day', time_updated) from scrape
+							where deveui = $1
+							GROUP BY DATE_TRUNC('day', time_updated)
+							ORDER BY DATE_TRUNC('day', time_updated) DESC
+							limit 56;`,
+		plotType), deveui)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	var data float32
+	var timestamp time.Time
+	var datas []float32
+	var timestamps []time.Time
+	for rows.Next() {
+		err := rows.Scan(&data, &timestamp)
+		if err != nil {
+			log.Fatal(err)
+		}
+		datas = append(datas, data)
+		timestamps = append(timestamps, timestamp)
+
+	}
+	return datas, timestamps
+}

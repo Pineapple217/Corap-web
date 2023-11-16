@@ -171,6 +171,15 @@ templ Device(device models.Device) {
  					style="width: 800px; height: 450px; display: none"
 				></div>
 			</div>
+			// <div class="p-2 rounded shadow-md">
+			// 	<div
+			// 		id="humidity"
+			// 		class="tab-content2"
+			// 		hx-get={ "/devices/" + device.Deveui + "/plot/heatmap/co2" }
+			// 		hx-trigger="load, change from:#time-range"
+			// 		style="width: 800px; height: 450px"
+			// 	></div>
+			// </div>
 		</div>
 		<script>
 			function openTab(event, tabName) {
