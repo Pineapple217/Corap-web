@@ -1,0 +1,15 @@
+package view
+
+import "github.com/Pineapple217/Corap-web/pkg/database"
+
+templ StatsHome(stats []*database.Stat) {
+	@boiler() {
+		<h1>Stats</h1>
+		for _, stat := range(stats) {
+			<article>
+				<h4>{ stat.Name }</h4>
+				<p>{ stat.Value }</p>
+			</article>
+		}
+	}
+}

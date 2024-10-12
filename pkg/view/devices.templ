@@ -1,0 +1,89 @@
+package view
+
+import (
+	"github.com/Pineapple217/Corap-web/pkg/database"
+	"strconv"
+)
+
+templ DevicesHome() {
+	@boiler() {
+		<h1>Devices</h1>
+		<div hx-get="/devices/table_ana" hx-trigger="load"></div>
+	}
+}
+
+templ DevicesTable(devs []*database.Device) {
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>deveui</th>
+				<th>Temperature (°C)</th>
+				<th>Co2 (PPM)</th>
+				<th>Humidity (%)</th>
+				<th>Source</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, dev := range(devs) {
+				<tr>
+					<td><a href={ templ.URL("/devices/" + dev.Deveui) }>{ dev.Name }</a></td>
+					<td>{ dev.Deveui }</td>
+					<td>{ strconv.FormatFloat(float64(dev.Temp), 'f', -1, 32) }</td>
+					<td>{ strconv.Itoa(dev.Co2) }</td>
+					<td>{ strconv.Itoa(dev.Humi) }</td>
+					<td><a href={ templ.URL(dev.Url()) } target="_blank">link</a></td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+templ DevicesAnalysisTable(devs []*database.DeviceAnalysis) {
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>deveui</th>
+				<th>Temperature (°C)</th>
+				<th>Co2 (PPM)</th>
+				<th>Humidity (%)</th>
+				<th>Defect</th>
+				for _, a := range(devs[0].Analysis) {
+					<th>{ a.Name }</th>
+				}
+				<th>Source</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, dev := range(devs) {
+				<tr>
+					<td><a href={ templ.URL("/devices/" + dev.Deveui) }>{ dev.Name }</a></td>
+					<td>{ dev.Deveui }</td>
+					<td>{ strconv.FormatFloat(float64(dev.Temp), 'f', -1, 32) }</td>
+					<td>{ strconv.Itoa(dev.Co2) }</td>
+					<td>{ strconv.Itoa(dev.Humi) }</td>
+					<td>{ strconv.FormatBool(dev.IsDefect) }</td>
+					for _, a := range(dev.Analysis) {
+						<td>{ a.Value }</td>
+					}
+					<td><a href={ templ.URL(dev.Url()) } target="_blank">link</a></td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+templ DeviceHome(dev *database.Device) {
+	@boiler() {
+		<h1>{ dev.Name } - <a href={ templ.URL(dev.Url()) } target="_blank">source</a></h1>
+		<p>{ dev.Deveui }</p>
+		<p>{ strconv.FormatFloat(float64(dev.Temp), 'f', -1, 32) }</p>
+		<p>{ strconv.Itoa(dev.Co2) }</p>
+		<p>{ strconv.Itoa(dev.Humi) }</p>
+		<br/>
+		<echarts-line-chart data-type="temp" range="1" deveui={ dev.Deveui }></echarts-line-chart>
+		<echarts-line-chart data-type="co2" range="1" deveui={ dev.Deveui }></echarts-line-chart>
+		<echarts-line-chart data-type="humi" range="1" deveui={ dev.Deveui }></echarts-line-chart>
+	}
+}

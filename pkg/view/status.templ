@@ -1,0 +1,11 @@
+package view
+
+templ NotFound() {
+	@boiler() {
+		<div>
+			<h1>404</h1>
+			<p>Not Found</p>
+			<a href={ templ.URL("/") }>{ "<- return home" }</a>
+		</div>
+	}
+}

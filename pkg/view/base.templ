@@ -1,0 +1,34 @@
+package view
+
+import s "github.com/Pineapple217/Corap-web/pkg/static"
+
+templ boiler() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			// <meta name="theme-color" content="#181818"/>
+			// <link rel="icon" href={ s.StaticMap["/static/favicon.ico"] } sizes="32x32"/>
+			// <link rel="icon" href={ s.StaticMap["/static/icon.svg"] } type="image/svg+xml"/>
+			// <link rel="apple-touch-icon" href={ s.StaticMap["/static/apple-touch-icon.png"] }/>
+			// <link rel="manifest" href="/site.webmanifest"/>
+			<link rel="stylesheet" href={ s.StaticMap["/static/main.css"] }/>
+			<script src={ s.StaticMap["/static/js/htmx.min.js"] }></script>
+			<script src={ s.StaticMap["/static/js/echarts.min.js"] }></script>
+			<script src={ s.StaticMap["/static/js/charts.js"] }></script>
+			<title>Corap</title>
+		</head>
+		<body>
+			<header>
+				<h1>Corap V2</h1>
+				<nav>
+					<a href="/devices">devices</a>
+					{ " / " }
+					<a href="/stats">stats</a>
+				</nav>
+			</header>
+			{ children... }
+		</body>
+	</html>
+}
